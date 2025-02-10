@@ -33,5 +33,12 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node.value, "test paragraph")
         self.assertEqual(node.props, {"<a>": "https://www.google.com"})
 
+    def test_uneq(self):
+        node = LeafNode("style", "morphg", props={"<a>": "https://www.google.com"})
+        self.assertEqual(node.tag, "style")
+        self.assertEqual(node.value, "morphg")
+        self.assertEqual(node.children, None)
+        self.assertEqual(node.props, {"<a>": "https://www.google.com"})
+
 if __name__ == "__main__":
     unittest.main()
