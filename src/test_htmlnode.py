@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 # HTMLNode Tests
 
@@ -29,6 +29,21 @@ class TestHTMLNode(unittest.TestCase):
 class TestLeafNode(unittest.TestCase):
     def test_eq(self):
         node = LeafNode("p", "test paragraph", props={"<a>": "https://www.google.com"})
+        self.assertEqual(node.tag, "p")
+        self.assertEqual(node.value, "test paragraph")
+        self.assertEqual(node.props, {"<a>": "https://www.google.com"})
+
+    def test_uneq(self):
+        node = LeafNode("style", "morphg", props={"<a>": "https://www.google.com"})
+        self.assertEqual(node.tag, "style")
+        self.assertEqual(node.value, "morphg")
+        self.assertEqual(node.children, None)
+        self.assertEqual(node.props, {"<a>": "https://www.google.com"})
+
+# ParentNode tests
+class TestParentNode(unittest.TestCase):
+    def test_eq(self):
+        node = ParentNode("p", children = [LeafNode("style", "morphg", props={"<a>": "https://www.google.com"})], props={"<a>": "https://www.google.com"})
         self.assertEqual(node.tag, "p")
         self.assertEqual(node.value, "test paragraph")
         self.assertEqual(node.props, {"<a>": "https://www.google.com"})
