@@ -1,3 +1,5 @@
+from textnode import TextNode, TextType
+
 class HTMLNode():
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -54,3 +56,10 @@ class ParentNode(HTMLNode):
 
     def __repr__(self):
         return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
+
+# convert TextNode to HTMLNode
+def text_node_to_html_node(text_node):
+
+    match text_node:
+        case TextType.NORMAL_TEXT:
+            return LeafNode(None, value = text_node.text, None)
