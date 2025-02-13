@@ -3,26 +3,25 @@ from textnode import TextNode, TextType
 # list of "old_nodes", return list of "new_nodes"
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
-    for node in old_nodes:
-        if node != TextType.NORMAL_TEXT:
-            new_nodes.append(node)
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.NORMAL_TEXT:
+            new_nodes.append(old_node)
             continue
-        split_node = []
-        section = node.text.split(delimiter)
-        if len(section) % 2 == 0:
+        split_nodes = []
+        sections = old_node.text.split(delimiter) # split should make an odd number of sections
+        if len(sections) % 2 == 0:
             raise Exception("invalid Markdown syntax (missing closing delimiter)")
-        for i in range(len(section)):
-            if section[i] == "":
+        for i in range(len(sections)):
+            if sections[i] == "":
                 continue
-
             if i % 2 == 0:
-                split_node.append(
-                    TextNode(text = section[i], text_type = TextType.NORMAL_TEXT)
+                split_nodes.append(
+                    TextNode(text = sections[i], TextType.NORMAL_TEXT)
                 )
             else:
-                split_node.append(
-                    TextNode(text = section[i], text_type = text_type)
+                split_nodes.append(
+                    TextNode(text = sections[i], text_type = text_type)
                 )
 
-        new_nodes.extend(split_node)
+        new_nodes.extend(split_nodes)
     return new_nodes
