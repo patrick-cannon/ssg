@@ -16,11 +16,11 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 continue
             if i % 2 == 0:
                 split_nodes.append(
-                    TextNode(text = sections[i], TextType.NORMAL_TEXT)
+                    TextNode(sections[i], TextType.NORMAL_TEXT)
                 )
             else:
                 split_nodes.append(
-                    TextNode(text = sections[i], text_type = text_type)
+                    TextNode(sections[i], text_type = text_type)
                 )
 
         new_nodes.extend(split_nodes)
