@@ -18,3 +18,15 @@ class TestInlineMarkdown(unittest.TestCase):
             new_nodes,
         )
 
+    def test_delim_bold(self):
+        node = TextNode("This node is **bold** and that's fun.", TextType.NORMAL_TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+        self.assertEqual(
+            [
+                TextNode("This node is ", TextType.NORMAL_TEXT),
+                TextNode("bold", TextType.BOLD_TEXT),
+                TextNode(" and that's fun.", TextType.NORMAL_TEXT)
+                ],
+            new_nodes
+        )
+
