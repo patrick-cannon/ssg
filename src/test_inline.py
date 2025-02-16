@@ -30,3 +30,56 @@ class TestInlineMarkdown(unittest.TestCase):
             new_nodes
         )
 
+    def test_delim_bold_double(self):
+        node = TextNode("This sentence **has** two **bold** words.", TextType.NORMAL_TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+        self.assertEqual(
+            [
+                TextNode("This sentence ", TextType.NORMAL_TEXT),
+                TextNode("has", TextType.BOLD_TEXT),
+                TextNode(" two ", TextType.NORMAL_TEXT),
+                TextNode("bold", TextType.BOLD_TEXT),
+                TextNode(" words.", TextType.NORMAL_TEXT)
+                ],
+            new_nodes
+        )
+
+    def test_delim_bold_multiword(self):
+        node = TextNode(
+            "This sentence has **multiple bolded words** and **stuff**", TextType.NORMAL_TEXT
+        )
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+        self.assertListEqual(
+            [
+                TextNode("This sentence has ", TextType.NORMAL_TEXT),
+                TextNode("multiple bolded words", TextType.BOLD_TEXT),
+                TextNode(" and ", TextType.NORMAL_TEXT),
+                TextNode("stuff", TextType.BOLD_TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_bold_and_italic(self):
+        node = TextNode("**bold** then *italic*", TextType.NORMAL_TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+        new_nodes = split_nodes_delimiter(new_nodes, "*", TextType.ITALIC_TEXT)
+        self.assertListEqual(
+            [
+                TextNode("bold", TextType.BOLD_TEXT),
+                TextNode(" then ", TextType.NORMAL_TEXT),
+                TextNode("italic", TextType.ITALIC_TEXT),
+            ],
+            new_nodes,
+        )
+
+    def test_delim_code(self):
+        node = TextNode("This sentence has `code block` words", TextType.NORMAL_TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE_TEXT)
+        self.assertListEqual(
+            [
+                TextNode("This sentence has ", TextType.NORMAL_TEXT),
+                TextNode("code block", TextType.CODE_TEXT),
+                TextNode(" words", TextType.NORMAL_TEXT),
+            ],
+            new_nodes,
+        )
