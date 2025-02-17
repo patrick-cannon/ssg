@@ -3,6 +3,8 @@ from inline import (
     split_nodes_delimiter,
     extract_markdown_links,
     extract_markdown_images,
+    split_nodes_image,
+    split_nodes_link
 )
 
 from textnode import TextNode, TextType
@@ -102,4 +104,28 @@ class TestInlineMarkdown(unittest.TestCase):
                 ("another link", "https://blog.boot.dev"),
             ],
             matches,
+        )
+
+    def test_split_nodes_image(self):
+        node = TextNode("This is a node with an image ![to Python](https://i.imgur.com/zjjcJKZ.png)", TextType.IMAGES
+        )
+        new_node = split_nodes_image([node])
+        self.assertEqual(
+            [
+                TextNode("This is a node with an image ", TextType.NORMAL_TEXT),
+                TextNode("![to Python](https://i.imgur.com/zjjcJKZ.png)", TextType.IMAGES)
+            ],
+            new_node
+        )
+
+    def test_split_nodes_link(self):
+        node = TextNode("This is a node with a link [to Python](https://www.python.org/downloads/)", TextType.LINKS
+        )
+        new_node = split_nodes_link([node])
+        self.assertEqual(
+            [
+                TextNode("This is a node with a link ", TextType.NORMAL_TEXT),
+                TextNode("[to Python](https://www.python.org/downloads/)", TextType.LINKS)
+            ],
+            new_node
         )
