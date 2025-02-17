@@ -107,25 +107,57 @@ class TestInlineMarkdown(unittest.TestCase):
         )
 
     def test_split_nodes_image(self):
-        node = TextNode("This is a node with an image ![to Python](https://i.imgur.com/zjjcJKZ.png)", TextType.IMAGES
+        node = TextNode("This is a node with an image ![to Python](https://i.imgur.com/zjjcJKZ.png)", TextType.NORMAL_TEXT
         )
         new_node = split_nodes_image([node])
-        self.assertEqual(
+        self.assertListEqual(
             [
                 TextNode("This is a node with an image ", TextType.NORMAL_TEXT),
-                TextNode("![to Python](https://i.imgur.com/zjjcJKZ.png)", TextType.IMAGES)
+                TextNode("to Python", TextType.IMAGES, "https://i.imgur.com/zjjcJKZ.png")
             ],
-            new_node
+            new_node,
+        )
+
+
+    def test_split_only_image(self):
+        node = TextNode(
+            "![image](https://cdn.kde.org/screenshots/kdevelop/kdevelop.png)",
+            TextType.NORMAL_TEXT,
+        )
+        new_node = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("image", TextType.IMAGES, "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png"),
+            ],
+            new_node,
+        )
+
+    def test_split_multiple_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://cdn.kde.org/screenshots/kdevelop/kdevelop.png) and another ![second image](https://cdn.kde.org/screenshots/kmail/kmail.png)",
+            TextType.NORMAL_TEXT,
+        )
+        new_node = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.NORMAL_TEXT),
+                TextNode("image", TextType.IMAGES, "https://cdn.kde.org/screenshots/kdevelop/kdevelop.png"),
+                TextNode(" and another ", TextType.NORMAL_TEXT),
+                TextNode(
+                    "second image", TextType.IMAGES, "https://cdn.kde.org/screenshots/kmail/kmail.png"
+                ),
+            ],
+            new_node,
         )
 
     def test_split_nodes_link(self):
-        node = TextNode("This is a node with a link [to Python](https://www.python.org/downloads/)", TextType.LINKS
+        node = TextNode("This is a node with a link [to Python](https://www.python.org/downloads/)", TextType.NORMAL_TEXT
         )
         new_node = split_nodes_link([node])
-        self.assertEqual(
+        self.assertListEqual(
             [
                 TextNode("This is a node with a link ", TextType.NORMAL_TEXT),
-                TextNode("[to Python](https://www.python.org/downloads/)", TextType.LINKS)
+                TextNode("to Python", TextType.LINKS, "https://www.python.org/downloads/")
             ],
             new_node
         )

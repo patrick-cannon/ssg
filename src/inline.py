@@ -46,6 +46,7 @@ def split_nodes_image(old_nodes):
         if old_node.text_type != TextType.NORMAL_TEXT:
             new_nodes.append(old_node) # other type of text
             continue
+
         old_text = old_node.text
         images = extract_markdown_images(old_text)
         if len(images) == 0:
@@ -56,7 +57,7 @@ def split_nodes_image(old_nodes):
             if len(sections) != 2:
                 raise ValueError("image section not complete")
             if sections[0] != '':
-                new_nodes.append(TextNode(section[0], TextType.NORMAL_TEXT))
+                new_nodes.append(TextNode(sections[0], TextType.NORMAL_TEXT))
             new_nodes.append(
                 TextNode(
                     image[0],
@@ -111,7 +112,7 @@ def split_nodes_link(old_nodes):
             if len(sections) != 2:
                 raise ValueError("link section not complete")
             if sections[0] != '':
-                new_nodes.append(TextNode(section[0], TextType.NORMAL_TEXT))
+                new_nodes.append(TextNode(sections[0], TextType.NORMAL_TEXT))
             new_nodes.append(
                 TextNode(
                     link[0],
