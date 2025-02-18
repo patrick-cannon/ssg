@@ -24,7 +24,9 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     TextNode(sections[i], text_type = text_type)
                 )
 
+
         new_nodes.extend(split_nodes)
+
     return new_nodes
 
 # extract links
@@ -51,6 +53,7 @@ def split_nodes_image(old_nodes):
         images = extract_markdown_images(old_text)
         if len(images) == 0:
             new_nodes.append(old_node) # no images present
+            continue
 
         for image in images:
             sections = old_text.split(f"![{image[0]}]({image[1]})", 1)
@@ -66,6 +69,7 @@ def split_nodes_image(old_nodes):
                 )
             )
             old_text = sections[1]
+
         if old_text != '':
             new_nodes.append(TextNode(old_text, TextType.NORMAL_TEXT))
 
@@ -81,6 +85,7 @@ def split_nodes_link(old_nodes):
         links = extract_markdown_links(old_text)
         if len(links) == 0:
             new_nodes.append(old_node) # no links present
+            continue
 
         for link in links:
             sections = old_text.split(f"[{link[0]}]({link[1]})", 1)
@@ -96,6 +101,7 @@ def split_nodes_link(old_nodes):
                 )
             )
             old_text = sections[1]
+
         if old_text != '':
             new_nodes.append(TextNode(old_text, TextType.NORMAL_TEXT))
 
@@ -106,19 +112,16 @@ def text_to_textnodes(text):
     original_text = text.copy()
     final_nodes = []
 
-    bold_words = split_nodes_delimiter(original_text, "**", TextType.NORMAL_TEXT)
-    final_nodes.append(bold_words)
+    bold_words = split_nodes_delimiter(original_text, "**", TextType.BOLD_TEXT)
 
-    italic_words = split_nodes_delimiter(original_text, "*", TextType.NORMAL_TEXT)
-    final_nodes.append(italic_words)
+    italic_words = split_nodes_delimiter(bold_words, "*", TextType.ITALIC_TEXT)
 
-    code_words = split_nodes_delimiter(original_text, "`", TextType.NORMAL_TEXT)
-    final_nodes.append(code_words)
+    code_words = split_nodes_delimiter(italic_words, "`", TextType.CODE_TEXT)
 
-    images = split_nodes_image(original_text)
-    final_nodes.append(images)
+    images = split_nodes_image(code_words)
 
-    links = split_nodes_link(original_text)
-    final_nodes.append(links)
+    links = split_nodes_link(images)
+
+    final_nodes.extend(links)
 
     return final_nodes
