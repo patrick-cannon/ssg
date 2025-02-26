@@ -109,10 +109,9 @@ def split_nodes_link(old_nodes):
 
 
 def text_to_textnodes(text):
-    original_text = text.copy()
-    final_nodes = []
+    final_nodes = [TextNode(text, TextType.NORMAL_TEXT)]
 
-    bold_words = split_nodes_delimiter(original_text, "**", TextType.BOLD_TEXT)
+    bold_words = split_nodes_delimiter(final_nodes, "**", TextType.BOLD_TEXT)
 
     italic_words = split_nodes_delimiter(bold_words, "*", TextType.ITALIC_TEXT)
 
