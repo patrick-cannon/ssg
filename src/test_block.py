@@ -5,6 +5,7 @@ from blocks import (
     block_to_block_type,
     BlockType,
 )
+from title import extract_title
 
 
 class TestMarkdownToHTML(unittest.TestCase):
@@ -161,6 +162,14 @@ the **same** even with inline stuff
         self.assertEqual(
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
+
+    def test_extract_title(self):
+        markdown = "# Hello "
+        node = extract_title(markdown)
+        self.assertEqual(
+            node,
+            "Hello"
         )
 
 
