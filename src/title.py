@@ -1,6 +1,8 @@
 def extract_title(markdown):
 
-    if not markdown.startswith("# "):
-        raise Exception("no h1 header")
-    else:
-        return markdown.lstrip("# ").rstrip()
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line[2:]
+
+    raise Exception("no h1 header")
