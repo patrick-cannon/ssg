@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+from pathlib import Path
 from blocks import markdown_to_html_node
 from title import extract_title
 
@@ -18,7 +19,7 @@ def copy_files_recursive(source_directory_path, destination_directory_path):
             copy_files_recursive(from_path, to_path)
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f' Generating page from {from_path} to {dest_path} using {template_path}')
 
     from_file = open(from_path, "r")
@@ -35,43 +36,25 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown_content)
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html_string)
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
 
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":
         os.makedirs(dest_dir_path, exist_ok=True)
-    to_file = open(dest_dir_path, "w")
+    to_file = open(dest_path, "w")
     to_file.write(template)
 
-def generate_pages_recursively(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursively(dir_path_content, template_path, dest_dir_path, basepath):
     if not os.path.exists(dest_dir_path):
         os.mkdir(dest_dir_path)
 
     for filename in os.listdir(dir_path_content):
         from_path = os.path.join(dir_path_content, filename)
+        dest_path = os.path.join(dest_dir_path, filename)
         if os.path.isfile(from_path):
-            if filename.endswith(".md"):
-                to_path = os.path.join(dest_dir_path, filename.replace(".md", ".html"))
-                from_file = open(from_path, "r")
-                markdown_content = from_file.read()
-                from_file.close()
-
-                template_file = open(template_path, "r")
-                template = template_file.read()
-                template_file.close()
-
-                html_node = markdown_to_html_node(markdown_content)
-                html_string = html_node.to_html()
-
-                title = extract_title(markdown_content)
-                template = template.replace("{{ Title }}", title)
-                template = template.replace("{{ Content }}", html_string)
-                
-                to_file = open(to_path, "w")
-                to_file.write(template)
-            else:
-                to_path = os.path.join(dest_dir_path, filename)
-
+            dest_path = Path(dest_path).with_suffix(".html")
+            generate_page(from_path, template_path, dest_path, basepath)
         else:
-            to_path = os.path.join(dest_dir_path, filename)
-            generate_pages_recursively(from_path, template_path, to_path)
+            generate_pages_recursively(from_path, template_path, dest_path, basepath)
             
